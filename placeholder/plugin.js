@@ -14,8 +14,10 @@ tinymce.PluginManager.add('placeholder', function(editor)
     if (typeof config.ph_items === 'string') {
         config.ph_items = document.querySelectorAll(config.ph_items);
     }
-    if (!(config instanceof NodeList) && typeof config.ph_items[0] !== 'object') {
-        throw new TypeError('placeholder items must be objects (pass either an array, a NodeList, a jQuery object or a selector string)');
+    if (typeof config.ph_items !== 'object' || typeof config.ph_items.length === 'undefined') {
+        throw new TypeError(
+            'placeholder items must be objects (pass either an array, a NodeList, a jQuery object or a selector string)'
+        );
     }
     for (i=0;i<config.ph_items.length;++i) {
         if (config.ph_items[i] instanceof HTMLElement) {
@@ -24,7 +26,7 @@ tinymce.PluginManager.add('placeholder', function(editor)
                 value: config.ph_items[i].value || this.text,
                 onclick: config.ph_cb
             };
-        } else {
+        } else if (typeof config.ph_items[i] === 'object') {
             item = config.ph_items[i];
             if (!item.hasOwnProperty('value')) {
                 item.value = item.text || '';
@@ -35,8 +37,12 @@ tinymce.PluginManager.add('placeholder', function(editor)
             if (!item.hasOwnProperty('onclick')) {
                 item.onclick = config.ph_cb;
             }
+        } else {
+            item = false;
         }
-        placeholders.push(item);
+        if (item) {
+            placeholders.push(item);
+        }
     }
     if (config.remove) {
         for(i=0;i<config.ph_items.length;++i) {
