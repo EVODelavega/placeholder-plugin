@@ -6,9 +6,7 @@ tinymce.PluginManager.add('placeholder', function(editor)
             ph_items: editor.settings.placeholders,
             ph_cb: typeof editor.settings.ph_callback === 'function' ? editor.settings.ph_callback : function()
             {
-                tinymce.activeEditor.execCommand(
-                    'mceInsertContent',
-                    false,
+                tinymce.activeEditor.insertContent(
                     this._value
                 );
             }
